@@ -1,17 +1,21 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+
 import Editor from "./components/Editor";
 import Review from "./components/Review";
 
 function App() {
   const [review, setReview] = useState("");
   const [state, setState] = useState("idle");
-
-  const isGenerating = state === "generating"
+  const isGenerating = state === "generating";
 
   const handleGenerateReview = async (code) => {
+    if (!code || code.trim() === "") {
+      alert("Please enter some code before generating a review.");
+      return;
+    }
+
     try {
+      setState("generating");
       const response = await fetch("http://localhost:3000/api/v1/reviews", {
         method: "POST",
         headers: {
@@ -20,18 +24,29 @@ function App() {
         body: JSON.stringify({ code }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to generate review.");
+        throw new Error(errorData.message || "Failed to generate review.");
+      }
+
       const data = await response.json();
       setReview(data.review);
+      setState("generated");
     } catch (err) {
-      alert("Something went wrong. Please try again later.");
-      console.log(err);
+      console.error("Error generating review:", err.message);
+      alert("Something went wrong. Please try again.");
+      setState("idle");
     }
   };
 
   return (
     <div className="flex">
-      <Editor onGenerateReview={handleGenerateReview} isGenerating={isGenerating} />
-      <Review review={review} isGenerating={isGenerating} />
+      <Editor
+        isGenerating={isGenerating}
+        onGenerateReview={handleGenerateReview}
+      />
+      <Review isGenerating={isGenerating} review={review} />
     </div>
   );
 }

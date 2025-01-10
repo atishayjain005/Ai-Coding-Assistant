@@ -2,9 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-
-#root{
+#root {
   padding: 0px;
   margin: 0;
   background-color: #282c34;
+}
+
+.cm-editor {
+  padding: 1rem;
+}
+
+/* Global scrollbar styles */
+html {
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #888 #222; /* Thumb and track color for Firefox */
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+html::-webkit-scrollbar-track {
+  background: #222;
 }
