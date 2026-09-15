@@ -1,4 +1,3 @@
-import React from "react";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import Loader from "./Loader";
 
@@ -14,18 +13,18 @@ export default function Review({ review, isGenerating }) {
             fontSize: "16px",
             minHeight: "100vh",
             padding: "1rem",
-            paddingBottom:"6rem",
+            paddingBottom: "6rem",
             backgroundColor: "#030712",
           }}
         />
       ) : (
         <div
-        className="bg-[#030712] h-full"
+          className="bg-[#030712] h-full"
           style={{
             fontSize: "16px",
             color: "#f87171",
             padding: "1rem",
-            paddingBottom:"3rem",
+            paddingBottom: "3rem",
             textAlign: "center",
           }}
         >

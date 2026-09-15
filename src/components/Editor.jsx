@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { AiOutlineComment } from "react-icons/ai";
-export default function Editor({ onGenerateReview, isGenerating }) {
+export default function Editor({ error, onGenerateReview, isGenerating }) {
   const [code, setCode] = useState("");
 
   return (
@@ -26,10 +26,6 @@ export default function Editor({ onGenerateReview, isGenerating }) {
       <button
         disabled={isGenerating}
         onClick={() => {
-          if (!code.trim()) {
-            alert("Please enter some code before generating a review.");
-            return;
-          }
           onGenerateReview(code);
         }}
         className="fixed bottom-3 right-3 z-50 bg-gray-900 border border-gray-900 hover:border-gray-400 text-gray-400 rounded-full px-4 py-3 shadow-xl duration-200 flex items-center gap-2"
@@ -42,6 +38,11 @@ export default function Editor({ onGenerateReview, isGenerating }) {
           </>
         )}
       </button>
+      {error ? (
+        <p className="fixed bottom-20 left-3 right-3 z-50 rounded-md border border-red-400/40 bg-red-950 px-4 py-3 text-sm text-red-100 shadow-xl md:left-auto md:max-w-md">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }
