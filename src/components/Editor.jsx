@@ -2,8 +2,10 @@ import { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { AiOutlineComment } from "react-icons/ai";
+import { starterCode } from "../sampleCode";
+
 export default function Editor({ error, onGenerateReview, isGenerating }) {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(starterCode);
 
   return (
     <div className="h-full w-6/12 relative flex flex-col overflow-hidden">
