@@ -8,7 +8,7 @@ export default function Editor({ error, onGenerateReview, isGenerating }) {
   const [code, setCode] = useState(starterCode);
 
   return (
-    <div className="h-full w-6/12 relative flex flex-col overflow-hidden">
+    <div className="relative flex min-h-[55vh] flex-col overflow-hidden border-b border-gray-800 md:min-h-screen md:w-6/12 md:border-b-0 md:border-r">
       <div
         className="flex-1 overflow-auto custom-scrollbar"
         style={{
@@ -20,7 +20,7 @@ export default function Editor({ error, onGenerateReview, isGenerating }) {
           onChange={(value) => setCode(value)}
           theme="dark"
           extensions={[javascript({ jsx: true })]}
-          style={{ fontSize: "14px", minHeight: "100vh" }}
+          style={{ fontSize: "14px", minHeight: "100%" }}
           placeholder="Write your code here..."
         />
       </div>
@@ -30,7 +30,7 @@ export default function Editor({ error, onGenerateReview, isGenerating }) {
         onClick={() => {
           onGenerateReview(code);
         }}
-        className="fixed bottom-3 right-3 z-50 bg-gray-900 border border-gray-900 hover:border-gray-400 text-gray-400 rounded-full px-4 py-3 shadow-xl duration-200 flex items-center gap-2"
+        className="fixed bottom-3 right-3 z-50 flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-4 py-3 text-gray-300 shadow-xl duration-200 hover:border-gray-400 disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isGenerating ? (
           "Generating..."

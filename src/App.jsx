@@ -30,7 +30,7 @@ function App() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen flex-col bg-gray-950 md:flex-row">
       <Editor
         isGenerating={isGenerating}
         error={error}
