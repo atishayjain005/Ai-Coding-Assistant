@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { AiOutlineComment } from "react-icons/ai";
-export default function Editor({ onGenerateReview, isGenerating }) {
-  const [code, setCode] = useState("");
+import { starterCode } from "../sampleCode";
+
+export default function Editor({ error, onGenerateReview, isGenerating }) {
+  const [code, setCode] = useState(starterCode);
 
   return (
-    <div className="h-full w-6/12 relative flex flex-col overflow-hidden">
+    <div className="relative flex min-h-[55vh] flex-col overflow-hidden border-b border-gray-800 md:min-h-screen md:w-6/12 md:border-b-0 md:border-r">
       <div
         className="flex-1 overflow-auto custom-scrollbar"
         style={{
@@ -18,7 +20,7 @@ export default function Editor({ onGenerateReview, isGenerating }) {
           onChange={(value) => setCode(value)}
           theme="dark"
           extensions={[javascript({ jsx: true })]}
-          style={{ fontSize: "14px", minHeight: "100vh" }}
+          style={{ fontSize: "14px", minHeight: "100%" }}
           placeholder="Write your code here..."
         />
       </div>
@@ -26,13 +28,9 @@ export default function Editor({ onGenerateReview, isGenerating }) {
       <button
         disabled={isGenerating}
         onClick={() => {
-          if (!code.trim()) {
-            alert("Please enter some code before generating a review.");
-            return;
-          }
           onGenerateReview(code);
         }}
-        className="fixed bottom-3 right-3 z-50 bg-gray-900 border border-gray-900 hover:border-gray-400 text-gray-400 rounded-full px-4 py-3 shadow-xl duration-200 flex items-center gap-2"
+        className="fixed bottom-3 right-3 z-50 flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-4 py-3 text-gray-300 shadow-xl duration-200 hover:border-gray-400 disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isGenerating ? (
           "Generating..."
@@ -42,6 +40,11 @@ export default function Editor({ onGenerateReview, isGenerating }) {
           </>
         )}
       </button>
+      {error ? (
+        <p className="fixed bottom-20 left-3 right-3 z-50 rounded-md border border-red-400/40 bg-red-950 px-4 py-3 text-sm text-red-100 shadow-xl md:left-auto md:max-w-md">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

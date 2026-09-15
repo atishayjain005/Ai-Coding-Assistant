@@ -2,48 +2,38 @@ import { useState } from "react";
 
 import Editor from "./components/Editor";
 import Review from "./components/Review";
+import { createReview } from "./reviewApi";
 
 function App() {
   const [review, setReview] = useState("");
   const [state, setState] = useState("idle");
+  const [error, setError] = useState("");
   const isGenerating = state === "generating";
 
   const handleGenerateReview = async (code) => {
     if (!code || code.trim() === "") {
-      alert("Please enter some code before generating a review.");
+      setError("Please enter some code before generating a review.");
       return;
     }
 
     try {
+      setError("");
       setState("generating");
-      const response = await fetch("http://localhost:3000/api/v1/reviews", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        alert(errorData.message || "Failed to generate review.");
-        throw new Error(errorData.message || "Failed to generate review.");
-      }
-
-      const data = await response.json();
-      setReview(data.review);
+      const nextReview = await createReview(code);
+      setReview(nextReview);
       setState("generated");
     } catch (err) {
       console.error("Error generating review:", err.message);
-      alert("Something went wrong. Please try again.");
+      setError(err.message || "Something went wrong. Please try again.");
       setState("idle");
     }
   };
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen flex-col bg-gray-950 md:flex-row">
       <Editor
         isGenerating={isGenerating}
+        error={error}
         onGenerateReview={handleGenerateReview}
       />
       <Review isGenerating={isGenerating} review={review} />

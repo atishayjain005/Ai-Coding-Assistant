@@ -1,9 +1,12 @@
 import { ChatOllama } from "@langchain/ollama";
 
 const model = new ChatOllama({
-  model: "llama3.2",
+  baseUrl: process.env.OLLAMA_BASE_URL,
+  model: process.env.OLLAMA_MODEL || "llama3.2",
   temperature: 0,
 });
+
+const DEFAULT_TIMEOUT_MS = Number(process.env.REVIEW_TIMEOUT_MS || 30000);
 
 const prompt = `You are an expert front-end software engineer reviewing the code in an interview. You need to review and complete the tasks.
 
@@ -33,13 +36,28 @@ Key guidelines for your response:
 If no changes are needed, clearly state: "No improvements necessary."
 `;
 
-async function generateReview(code) {
+function withTimeout(operation, timeoutMs) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error("review timed out"));
+    }, timeoutMs);
+  });
+
+  return Promise.race([operation, timeout]).finally(() => {
+    clearTimeout(timeoutId);
+  });
+}
+
+async function generateReview(code, { timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
   try {
-    // Ensure proper input format for the model
-    const response = await model.invoke([
-      { role: "system", content: prompt },
-      { role: "user", content: code },
-    ]);
+    const response = await withTimeout(
+      model.invoke([
+        { role: "system", content: prompt },
+        { role: "user", content: code },
+      ]),
+      timeoutMs,
+    );
 
     if (!response || !response.content) {
       throw new Error("No response content received from the model.");
@@ -48,6 +66,9 @@ async function generateReview(code) {
     return response.content.trim(); // Clean up the response content
   } catch (error) {
     console.error("Model invocation failed:", error.message);
+    if (error.message === "review timed out") {
+      throw error;
+    }
     throw new Error("Failed to generate review from the model.");
   }
 }
